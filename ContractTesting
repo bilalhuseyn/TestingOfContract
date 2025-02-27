@@ -1,0 +1,54 @@
+const { expect } = require("chai"); //
+const { ethers } = require("hardhat");
+
+describe("📜 Inbox Smart Contract", function () {
+    let inbox;
+    let owner, user;
+
+    beforeEach(async function () {
+        [owner, user] = await ethers.getSigners();
+        const Inbox = await ethers.getContractFactory("Inbox");
+        inbox = await Inbox.deploy("Hello, world!");
+        await inbox.deployed();
+    });
+
+    describe("✅ 1. Kontrat Deploy Testleri", function () {
+        it("Kontrat başarılı şekilde deploy edildi mi?", async function () {
+            expect(inbox.address).to.not.be.undefined;
+        });
+
+        it("İlk mesaj doğru atandı mı?", async function () {
+            expect(await inbox.message()).to.equal("Hello, world!");
+        });
+
+        it("Owner doğru atandı mı?", async function () {
+            expect(await inbox.owner()).to.equal(owner.address);
+        });
+    });
+
+    describe("🔹 2. Fonksiyon Testleri", function () {
+        it("Mesaj güncelleniyor mu?", async function () {
+            await inbox.setMessage("New Message");
+            expect(await inbox.message()).to.equal("New Message");
+        });
+
+        it("Sadece owner mesajı değiştirebilir mi?", async function () {
+            await expect(
+                inbox.connect(user).setMessage("Hacker Message")
+            ).to.be.revertedWith("Only owner can set message");
+        });
+    });
+
+    describe("🔸 3. Edge Case Testleri", function () {
+        it("Boş mesaj girildiğinde ne oluyor?", async function () {
+            await inbox.setMessage("");
+            expect(await inbox.message()).to.equal("");
+        });
+
+        it("Çok uzun mesaj girildiğinde çalışıyor mu?", async function () {
+            const longMessage = "A".repeat(1000);
+            await inbox.setMessage(longMessage);
+            expect(await inbox.message()).to.equal(longMessage);
+        });
+    });
+});
