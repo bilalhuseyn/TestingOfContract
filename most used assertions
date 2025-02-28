@@ -1,0 +1,39 @@
+expect(someVariable).to.be.undefined;// if it returns someVariable, ok
+
+expect(await contract.someValue()).to.equal(42);//if the method returns 42, ok
+
+await expect(contract.someFunction()).to.be.revertedWith("Only owner can call this function");
+//the method is reverted error msg when error happens | 
+//for example, when someFunction() calls, the errormsg should be seen; that is ok
+
+await expect(contract.someFunction()).to.be.reverted;
+//if there is an error it have to be reverted, that is ok, if not there is a problem
+
+expect(await contract.isActive()).to.be.true;//if isActive() can return true, ok
+expect(await contract.isPaused()).to.be.false; //if isPaused() can return false, ok
+
+expect(await contract.balanceOf(user.address)).to.be.greaterThan(100);// if balanceOf(0x123...)greatherThan(0), that is ok
+expect(await contract.getPrice()).to.be.lessThan(50);
+
+const arr = await contract.getUsers();
+expect(arr).to.have.lengthOf(3);//if getUsers() returns array with 3 elements, ok
+
+const names = await contract.getNames();
+expect(names).to.include("Alice");//if getNames() array has Alice, that is ok
+
+expect(await contract.owner()).to.not.equal(user.address);
+
+await expect(() => contract.sendFunds(user.address, { value: ethers.utils.parseEther("1") }))
+    .to.changeEtherBalance(user, ethers.utils.parseEther("1"));
+
+await expect(contract.someFunction()).to.emit(contract, "Transfer").withArgs(owner.address, user.address, 100);
+
+
+
+
+
+
+
+
+
+
