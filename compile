@@ -1,0 +1,36 @@
+//determine path, fs, and solc
+const path = require("path");
+const fs = require("fs");
+const solc = require("solc");
+
+// path of Sol file
+const inboxPath = path.resolve(__dirname, "contracts", "Inbox.sol");
+
+// read the content of Sol
+const source = fs.readFileSync(inboxPath, "utf8");
+
+// compiling format for Sol 0.5+ versions
+const input = {
+  language: "Solidity",
+  sources: {
+    "Inbox.sol": {
+      content: source,
+    },
+  },
+  settings: {
+    outputSelection: {
+      "*": {
+        "*": ["abi", "evm.bytecode.object"],
+      },
+    },
+  },
+};
+
+// compiling
+const output = JSON.parse(solc.compile(JSON.stringify(input)));
+
+// Exporting ABI and Bytecode of compiling file
+module.exports = {
+  abi: output.contracts["Inbox.sol"].Inbox.abi,
+  bytecode: output.contracts["Inbox.sol"].Inbox.evm.bytecode.object,
+};
