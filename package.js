@@ -6,8 +6,10 @@
   "scripts": {
     "test": "mocha"
   },
+  
   "author": "",
   "license": "ISC",
+    
   "dependencies": {
     "ganache": "^7.9.2",
     "mocha": "^10.4.0",
